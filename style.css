@@ -10,7 +10,7 @@ h1,h2,h3{color:var(--g6);line-height:1.15;letter-spacing:-.02em}
 h1{font-size:clamp(2.3rem,5.5vw,4rem);font-weight:800;margin:14px 0}
 h2{font-size:clamp(1.7rem,3.5vw,2.3rem);margin-bottom:28px}
 h2::after{content:"";display:block;width:44px;height:3px;border-radius:3px;background:var(--grad);margin-top:12px}
-.sec{padding:96px 0;content-visibility:auto;contain-intrinsic-size:auto 720px}.alt{background:#F7F7FA;border-block:1px solid var(--g2)}
+.sec{padding:96px 0}.alt{background:#F7F7FA;border-block:1px solid var(--g2)}
 /* nav */
 .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);border-bottom:1px solid var(--g2);transition:box-shadow .3s}
 .nav.scrolled{box-shadow:0 8px 24px rgba(17,24,39,.06)}
@@ -53,7 +53,7 @@ svg{width:20px;height:20px;fill:currentColor}
 /* about */
 .about{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:center}
 .photo{aspect-ratio:1;border-radius:24px;overflow:hidden;border:1px solid var(--g2);box-shadow:0 20px 50px rgba(124,58,237,.14);max-width:380px;width:100%}
-.photo img{width:100%;height:100%;object-fit:cover}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
 .about p{margin-bottom:14px}
 .info{display:grid;gap:12px;margin-top:22px}
 .info .card{padding:14px 18px;display:flex;flex-wrap:wrap;gap:4px 14px}
@@ -71,8 +71,9 @@ svg{width:20px;height:20px;fill:currentColor}
 /* certificates */
 .certs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
 .cert{overflow:hidden;display:flex;flex-direction:column}
-.cert .cimg{aspect-ratio:4/3;background:var(--g1);cursor:pointer;overflow:hidden}
-.cert img{width:100%;height:100%;object-fit:cover}
+.cert .cimg{aspect-ratio:4/3;background:var(--g1);cursor:pointer;overflow:hidden;position:relative}
+.cert img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.cert:hover img{transform:scale(1.03)}
 .cert .cb{padding:18px;display:flex;flex-direction:column;gap:2px;flex:1}
 .cert h3{font-size:1.02rem}.cert small{color:var(--g4)}
 .cert .btn{margin-top:auto;padding:9px 16px;font-size:.85rem;background:var(--w);border-color:var(--g3);color:var(--g5);align-self:flex-start}

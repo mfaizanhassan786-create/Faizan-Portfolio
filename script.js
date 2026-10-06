@@ -13,15 +13,44 @@ const portfolioConfig = {
     liveDemo: "" // leave empty to hide the Live Demo button
 };
 
-/* Certificates — edit titles/organizations/dates here. Add or remove entries freely. */
+/* Certificates — verified credentials from images folder */
 const certificates = [
-    { image: "images/certificate-1.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-2.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-3.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-4.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-5.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-6.svg", title: "Certificate Name", organization: "Organization", date: "2026" },
-    { image: "images/certificate-7.svg", title: "Certificate Name", organization: "Organization", date: "2026" }
+    {
+        image: "images/modern-ai.jpeg",
+        title: "Introduction to Modern AI",
+        organization: "Saylani · Cisco Networking Academy",
+        date: "08 Mar 2026"
+    },
+    {
+        image: "images/python.jpeg",
+        title: "Python Essentials 1",
+        organization: "Cisco Networking Academy & Python Institute",
+        date: "22 Feb 2026"
+    },
+    {
+        image: "images/critical-thinking.jpeg",
+        title: "Critical Thinking in the AI Era",
+        organization: "HP LIFE · HP Foundation",
+        date: "28 Feb 2026"
+    },
+    {
+        image: "images/cybersecurity.jpeg",
+        title: "Cybersecurity Essentials",
+        organization: "Saylani · Cisco Networking Academy",
+        date: "11 Apr 2026"
+    },
+    {
+        image: "images/cybersecurity-smit.jpeg",
+        title: "Cybersecurity Essentials (Batch-1)",
+        organization: "Saylani Mass Training (SMIT)",
+        date: "Dec 2025 – Apr 2026"
+    },
+    {
+        image: "images/youth-workshop.jpeg",
+        title: "Youth Survival Workshop",
+        organization: "Al Hadid & Al Bakah Institute (CPD UK)",
+        date: "09 Feb 2026"
+    }
 ];
 
 const skills = [["Python","Py"],["Artificial Intelligence","AI"],["Machine Learning","ML"],["FastAPI","API"],["REST APIs","{ }"],["SQL","SQL"],["PostgreSQL","Pg"],["MongoDB","Mdb"],["Git & GitHub","Git"],["n8n","n8n"],["Data Science","DS"],["Problem Solving","PS"]];
@@ -70,47 +99,61 @@ guardImg($("#profileImg")); guardImg($("#projImg"));
 
 /* ---------- certificates ---------- */
 const grid = $("#certGrid");
-grid.innerHTML = certificates.map((x, i) => `<article class="card cert" data-i="${i}"><div class="cimg" data-i="${i}"><div class="ph">PDF</div></div><div class="cb"><h3>${x.title}</h3><small>${x.organization} · ${x.date}</small><button class="btn" data-i="${i}" type="button" disabled>Image not added</button></div></article>`).join("");
-const loaded = [];
-const certIO = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const i = +entry.target.dataset.i;
-        obs.unobserve(entry.target);
-        const x = certificates[i];
-        const im = new Image();
-        im.decoding = "async";
-        im.alt = `${x.title} — ${x.organization}`;
-        im.onload = () => {
-            loaded[i] = true;
-            const card = grid.children[i];
-            card.querySelector(".cimg").replaceChildren(im);
-            const b = card.querySelector("button"); b.disabled = false; b.textContent = "View Certificate";
-        };
-        im.src = x.image;
-    });
-}, { rootMargin: "240px 0px" });
-certificates.forEach((_, i) => certIO.observe(grid.children[i]));
+grid.innerHTML = certificates.map((x, i) => `
+    <article class="card cert" data-i="${i}">
+        <div class="cimg" data-i="${i}">
+            <img src="${x.image}" alt="${x.title} — ${x.organization}" loading="lazy" decoding="async">
+        </div>
+        <div class="cb">
+            <h3>${x.title}</h3>
+            <small>${x.organization} · ${x.date}</small>
+            <button class="btn" data-i="${i}" type="button">View Certificate</button>
+        </div>
+    </article>
+`).join("");
 
 /* ---------- modal ---------- */
 const modal = $("#modal"), mImg = $("#mImg"), wrap = $("#mimgWrap");
 let cur = 0;
-const avail = () => certificates.map((_, i) => i).filter(i => loaded[i]);
 function show(i) {
-    cur = i; const x = certificates[i];
-    mImg.src = x.image; mImg.alt = x.title; $("#mTitle").textContent = `${x.title} — ${x.organization}`;
+    if (i < 0 || i >= certificates.length) return;
+    cur = i;
+    const x = certificates[i];
+    mImg.src = x.image;
+    mImg.alt = x.title;
+    $("#mTitle").textContent = `${x.title} — ${x.organization}`;
     wrap.classList.remove("zoomed");
 }
-function openModal(i) { show(i); modal.hidden = false; document.body.style.overflow = "hidden"; }
-function closeModal() { modal.hidden = true; document.body.style.overflow = ""; }
-function step(d) { const a = avail(); show(a[(a.indexOf(cur) + d + a.length) % a.length]); }
-grid.addEventListener("click", e => { const t = e.target.closest("[data-i]"); if (t && loaded[+t.dataset.i]) openModal(+t.dataset.i); });
-$("#close").onclick = closeModal; $("#prev").onclick = () => step(-1); $("#next").onclick = () => step(1);
+function openModal(i) {
+    show(i);
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+}
+function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+}
+function step(d) {
+    if (!certificates.length) return;
+    const nextIdx = (cur + d + certificates.length) % certificates.length;
+    show(nextIdx);
+}
+grid.addEventListener("click", e => {
+    const t = e.target.closest("[data-i]");
+    if (t) openModal(+t.dataset.i);
+});
+$("#close").onclick = closeModal;
+$("#prev").onclick = () => step(-1);
+$("#next").onclick = () => step(1);
 $("#zoom").onclick = () => wrap.classList.toggle("zoomed");
-modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+modal.addEventListener("click", e => {
+    if (e.target === modal) closeModal();
+});
 document.addEventListener("keydown", e => {
     if (modal.hidden) return;
-    if (e.key === "Escape") closeModal(); if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1);
+    if (e.key === "Escape") closeModal();
+    if (e.key === "ArrowLeft") step(-1);
+    if (e.key === "ArrowRight") step(1);
 });
 
 /* ---------- navigation ---------- */
@@ -174,8 +217,9 @@ document.querySelectorAll(".sec .wrap").forEach(e => { e.classList.add("rv"); rv
         }
         const core = Math.min(w, h) * .26;
         const g = ctx.createRadialGradient(w / 2, h / 2, 6, w / 2, h / 2, core);
-        g.addColorStop(0, "rgba(243,244,246,.85)");
-        g.addColorStop(1, "rgba(243,244,246,0)");
+        g.addColorStop(0, "rgba(124,58,237,.16)");
+        g.addColorStop(0.5, "rgba(37,99,235,.07)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(w / 2, h / 2, core, 0, 6.2832);
