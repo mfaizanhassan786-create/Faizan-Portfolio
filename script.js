@@ -40,7 +40,7 @@ const certificates = [
         date: "11 Apr 2026"
     },
     {
-        image: "images/cybersecurity-smit.jpeg",
+        image: "images/cybersecurity-by-smit.jpeg",
         title: "Cybersecurity Essentials (Batch-1)",
         organization: "Saylani Mass Training (SMIT)",
         date: "Dec 2025 – Apr 2026"
@@ -103,6 +103,7 @@ grid.innerHTML = certificates.map((x, i) => `
     <article class="card cert" data-i="${i}">
         <div class="cimg" data-i="${i}">
             <img src="${x.image}" alt="${x.title} — ${x.organization}" loading="lazy" decoding="async">
+            <div class="ph" hidden>CERT</div>
         </div>
         <div class="cb">
             <h3>${x.title}</h3>
@@ -111,19 +112,26 @@ grid.innerHTML = certificates.map((x, i) => `
         </div>
     </article>
 `).join("");
+grid.querySelectorAll(".cimg img").forEach(guardImg);
 
 /* ---------- modal ---------- */
-const modal = $("#modal"), mImg = $("#mImg"), wrap = $("#mimgWrap");
+const modal = $("#modal"), mImg = $("#mImg"), wrap = $("#mimgWrap"), mPh = $("#mPh");
 let cur = 0;
 function show(i) {
     if (i < 0 || i >= certificates.length) return;
     cur = i;
     const x = certificates[i];
+    mImg.hidden = false;
+    if (mPh) mPh.hidden = true;
     mImg.src = x.image;
     mImg.alt = x.title;
     $("#mTitle").textContent = `${x.title} — ${x.organization}`;
     wrap.classList.remove("zoomed");
 }
+mImg.addEventListener("error", () => {
+    mImg.hidden = true;
+    if (mPh) mPh.hidden = false;
+});
 function openModal(i) {
     show(i);
     modal.hidden = false;
